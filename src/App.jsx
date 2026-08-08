@@ -10,13 +10,17 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { track } = usePlayer();
 
+  const goHome = () => {
+    setIsSearchOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="app">
       <header className="app-header">
-        <div className="app-header__brand">
-          <span className="app-header__mark" aria-hidden="true" />
-          <span className="app-header__wordmark">Vinylo</span>
-        </div>
+        <button className="app-header__brand" onClick={goHome} aria-label="Ke beranda">
+          <img className="app-header__logo" src="/logo.svg" alt="Vinylo" />
+        </button>
         <button
           className="app-header__search-btn"
           onClick={() => setIsSearchOpen(true)}
