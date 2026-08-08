@@ -3,7 +3,7 @@
   left: 12px;
   right: 12px;
   bottom: 12px;
-  z-index: 40;
+  z-index: 55;
   height: var(--mini-player-h);
   background: var(--bg-elevated);
   border: 1px solid var(--hairline);
