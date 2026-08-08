@@ -1,0 +1,114 @@
+/* ============================================================
+   Vinylo — design tokens
+   A "modern-classic" audio equipment feel: graphite body, brass
+   dial accent, off-white paper text. Instrument Serif for the
+   editorial headline moments, IBM Plex Sans for UI, IBM Plex
+   Mono for anything numeric (durations, counters, timestamps) —
+   like the digits on a tape deck.
+   ============================================================ */
+
+:root {
+  --bg: #121214;
+  --bg-elevated: #1a1a1d;
+  --panel: #1e1e22;
+  --panel-hover: #26262b;
+  --hairline: #2c2c31;
+
+  --text: #ede9e0;
+  --text-muted: #918d84;
+  --text-faint: #5c5a56;
+
+  --brass: #c9a227;
+  --brass-soft: #a98a2c;
+  --brass-tint: rgba(201, 162, 39, 0.12);
+
+  --danger: #c1443c;
+
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mini-player-h: 72px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body.scroll-locked {
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+input {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+::selection {
+  background: var(--brass-tint);
+  color: var(--text);
+}
+
+/* thin, quiet scrollbars for the horizontal rows */
+.hscroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+.hscroll::-webkit-scrollbar {
+  height: 6px;
+}
+.hscroll::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

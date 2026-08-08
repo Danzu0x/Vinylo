@@ -1,0 +1,64 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(16px + env(safe-area-inset-top)) 20px 14px;
+  background: linear-gradient(180deg, var(--bg) 60%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.app-header__mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, var(--brass) 0%, var(--brass-soft) 55%, #2a2210 100%);
+  box-shadow: 0 0 0 3px var(--panel);
+}
+
+.app-header__wordmark {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+.app-header__search-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.app-header__search-btn:hover {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 6px;
+}
+
+.app-main--with-player {
+  padding-bottom: calc(var(--mini-player-h) + 34px);
+}

@@ -1,0 +1,264 @@
+.full-player {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.full-player__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 9, 0.7);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+
+.full-player__sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  max-height: 100dvh;
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 55%);
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 24px calc(28px + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.45s var(--ease);
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.full-player--open {
+  pointer-events: auto;
+}
+
+.full-player--open .full-player__backdrop {
+  opacity: 1;
+}
+
+.full-player--open .full-player__sheet {
+  transform: translateY(0);
+}
+
+.full-player__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding: 6px 0 4px;
+}
+
+.full-player__close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border-radius: 999px;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.full-player__close:hover {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.full-player__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.full-player__stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 12px 0;
+}
+
+.full-player__disc {
+  position: relative;
+  width: min(62vw, 300px);
+  height: min(62vw, 300px);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 10px var(--panel);
+  animation: disc-spin 16s linear infinite;
+  animation-play-state: paused;
+}
+
+.full-player__disc--spinning {
+  animation-play-state: running;
+}
+
+.full-player__disc img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.full-player__disc-hole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 3px solid var(--brass);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes disc-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.full-player__info {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 4px 8px 0;
+}
+
+.full-player__song {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.full-player__artist {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.full-player__error {
+  text-align: center;
+  color: var(--danger);
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+
+.full-player__scrub {
+  flex: 0 0 auto;
+  padding: 22px 4px 0;
+}
+
+.full-player__bar {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--hairline);
+  cursor: pointer;
+}
+
+.full-player__bar-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--brass);
+  transform-origin: left;
+  transition: transform 0.1s linear;
+}
+
+.full-player__bar-knob {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--brass);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.18);
+}
+
+.full-player__times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.full-player__controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding-top: 22px;
+}
+
+.full-player__toggle {
+  width: 66px;
+  height: 66px;
+  border-radius: 999px;
+  background: var(--brass);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s var(--ease);
+}
+
+.full-player__toggle:active {
+  transform: scale(0.94);
+}
+
+.full-player__toggle:disabled {
+  opacity: 0.7;
+}
+
+.full-player__skip {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.full-player__skip:hover {
+  color: var(--text);
+  background: var(--panel);
+}
+
+.full-player__spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2.5px solid rgba(18, 18, 20, 0.35);
+  border-top-color: var(--bg);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 420px) {
+  .full-player__song {
+    font-size: 24px;
+  }
+}
