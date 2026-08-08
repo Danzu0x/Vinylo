@@ -51,7 +51,7 @@
 .search-overlay__results {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 10px 12px 40px;
+  padding: 10px 12px 110px;
   max-width: 720px;
   width: 100%;
   margin: 0 auto;
