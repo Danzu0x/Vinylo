@@ -26,6 +26,11 @@ export function SearchOverlay({ isOpen, onClose }) {
   }, [isOpen, onClose]);
 
   useEffect(() => {
+    document.body.classList.toggle("scroll-locked", isOpen);
+    return () => document.body.classList.remove("scroll-locked");
+  }, [isOpen]);
+
+  useEffect(() => {
     clearTimeout(debounceRef.current);
     if (!query.trim()) {
       setState("idle");
