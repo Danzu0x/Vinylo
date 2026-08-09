@@ -1,13 +1,35 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useAudioEngine } from "../hooks/useAudioEngine.js";
 
 const PlayerContext = createContext(null);
 
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLLS = 20; // ~50s cap before giving up on the spotyloader job and falling back
+const STORAGE_KEY = "vinylo:playback";
+const PERSIST_INTERVAL_S = 5; // don't write to localStorage more than every ~5s of playback
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function loadSavedPlayback() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.track?.url || !parsed?.track?.videoId) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function savePlayback(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // storage full / disabled — resuming just won't work, not fatal
+  }
 }
 
 export function PlayerProvider({ children }) {
@@ -72,7 +94,7 @@ export function PlayerProvider({ children }) {
   // ---- orchestration ----
 
   const resolveAndLoad = useCallback(
-    async (nextTrack) => {
+    async (nextTrack, { autoplay = true, seekTo = 0 } = {}) => {
       const token = ++resolveTokenRef.current;
       setError(null);
       setTrack(nextTrack);
@@ -80,7 +102,7 @@ export function PlayerProvider({ children }) {
       const cached = resolveCacheRef.current.get(nextTrack.videoId);
       if (cached) {
         setResolveStage("done");
-        engine.load(cached, true);
+        engine.load(cached, autoplay, seekTo);
         return;
       }
 
@@ -88,7 +110,7 @@ export function PlayerProvider({ children }) {
         if (resolveTokenRef.current !== token) return; // a newer track was selected meanwhile
         resolveCacheRef.current.set(nextTrack.videoId, audioUrl);
         setResolveStage("done");
-        engine.load(audioUrl, true);
+        engine.load(audioUrl, autoplay, seekTo);
       };
 
       try {
@@ -164,6 +186,44 @@ export function PlayerProvider({ children }) {
 
   const expand = useCallback(() => setIsExpanded(true), []);
   const collapse = useCallback(() => setIsExpanded(false), []);
+
+  // ---- resume playback after a refresh ----
+
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+    const saved = loadSavedPlayback();
+    if (!saved) return;
+    setQueue(saved.queue?.length ? saved.queue : [saved.track]);
+    setQueueIndex(typeof saved.queueIndex === "number" ? saved.queueIndex : 0);
+    // autoplay:false — browsers block unsolicited audio after a refresh anyway,
+    // and it's more polite to let the person tap play themselves. The saved
+    // position is still restored so pressing play picks up right where they left off.
+    resolveAndLoad(saved.track, { autoplay: false, seekTo: saved.currentTime || 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const lastPersistedTimeRef = useRef(0);
+  useEffect(() => {
+    if (!track) return;
+    if (Math.abs(engine.currentTime - lastPersistedTimeRef.current) < PERSIST_INTERVAL_S) return;
+    lastPersistedTimeRef.current = engine.currentTime;
+    savePlayback({ track, queue, queueIndex, currentTime: engine.currentTime });
+  }, [engine.currentTime, track, queue, queueIndex]);
+
+  useEffect(() => {
+    const persistNow = () => {
+      if (!track) return;
+      savePlayback({ track, queue, queueIndex, currentTime: engine.currentTime });
+    };
+    window.addEventListener("pagehide", persistNow);
+    window.addEventListener("beforeunload", persistNow);
+    return () => {
+      window.removeEventListener("pagehide", persistNow);
+      window.removeEventListener("beforeunload", persistNow);
+    };
+  }, [track, queue, queueIndex, engine.currentTime]);
 
   const isResolving = resolveStage !== "idle" && resolveStage !== "done";
 
