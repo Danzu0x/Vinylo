@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { usePlayer } from "../context/PlayerContext.jsx";
+import { ArtThumb } from "./TrackCard.jsx";
 import "../styles/full-player.css";
 
 function formatTime(seconds) {
@@ -87,7 +88,7 @@ export function FullPlayer() {
 
         <div className="full-player__stage">
           <div className={`full-player__disc ${isPlaying ? "full-player__disc--spinning" : ""}`}>
-            <img src={track.thumbnail} alt="" />
+            <ArtThumb src={track.thumbnail} />
             <div className="full-player__disc-hole" />
           </div>
         </div>
