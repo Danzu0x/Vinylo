@@ -3,9 +3,12 @@ import { TrackRow } from "./TrackCard.jsx";
 import { usePlayer } from "../context/PlayerContext.jsx";
 import "../styles/search-overlay.css";
 
+const PAGE_SIZE = 12;
+
 export function SearchOverlay({ isOpen, onClose }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [state, setState] = useState("idle"); // idle | loading | ready | empty | error
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
@@ -32,6 +35,7 @@ export function SearchOverlay({ isOpen, onClose }) {
 
   useEffect(() => {
     clearTimeout(debounceRef.current);
+    setVisibleCount(PAGE_SIZE);
     if (!query.trim()) {
       setState("idle");
       setResults([]);
@@ -89,18 +93,29 @@ export function SearchOverlay({ isOpen, onClose }) {
           <p className="search-overlay__hint">Ketik judul lagu, artis, atau lirik yang kamu ingat.</p>
         )}
 
-        {state === "ready" &&
-          results.map((t) => (
-            <TrackRow
-              key={t.videoId}
-              track={t}
-              isActive={activeTrack?.videoId === t.videoId}
-              onPlay={(picked) => {
-                playTrack(picked, results);
-                onClose();
-              }}
-            />
-          ))}
+        {state === "ready" && (
+          <>
+            {results.slice(0, visibleCount).map((t) => (
+              <TrackRow
+                key={t.videoId}
+                track={t}
+                isActive={activeTrack?.videoId === t.videoId}
+                onPlay={(picked) => {
+                  playTrack(picked, results);
+                  onClose();
+                }}
+              />
+            ))}
+            {visibleCount < results.length && (
+              <button
+                className="search-overlay__load-more"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              >
+                Muat lebih banyak
+              </button>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
