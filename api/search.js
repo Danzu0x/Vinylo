@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         variables: {
           query: q,
-          numberOfTopResults: 20,
+          numberOfTopResults: 40,
           includePreReleases: true,
           includeAlbumPreReleases: true
         },
@@ -102,7 +102,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.setHeader("Cache-Control", "s-maxage=1800, stale-while-revalidate=3600");
+    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
     res.status(200).json({ status: true, result });
   } catch (err) {
     res.status(500).json({ status: false, message: "Gagal menghubungi pencarian Spotify." });
