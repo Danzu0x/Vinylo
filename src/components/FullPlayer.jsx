@@ -9,12 +9,13 @@ function formatTime(seconds) {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-function splitTitleArtist(title) {
-  const parts = title.split(" - ");
+function splitTitleArtist(track) {
+  if (track.artist) return { artist: track.artist, song: track.title };
+  const parts = track.title.split(" - ");
   if (parts.length >= 2) {
     return { artist: parts[0].trim(), song: parts.slice(1).join(" - ").trim() };
   }
-  return { artist: "Tidak diketahui", song: title };
+  return { artist: "Tidak diketahui", song: track.title };
 }
 
 export function FullPlayer() {
@@ -25,6 +26,7 @@ export function FullPlayer() {
     isPlaying,
     isBuffering,
     isResolving,
+    resolveStage,
     error,
     toggle,
     seek,
@@ -51,9 +53,14 @@ export function FullPlayer() {
 
   if (!track) return null;
 
-  const { artist, song } = splitTitleArtist(track.title);
+  const { artist, song } = splitTitleArtist(track);
   const progress = duration ? Math.min(1, currentTime / duration) : 0;
   const isLoading = isResolving || isBuffering;
+  const stageLabel = {
+    spotify: "menyiapkan…",
+    fallback: "sumber cadangan…",
+    youtube: "sumber terakhir…"
+  }[resolveStage];
 
   const handleScrub = (e) => {
     const bar = trackBarRef.current;
@@ -109,7 +116,7 @@ export function FullPlayer() {
           </div>
           <div className="full-player__times">
             <span>{formatTime(currentTime)}</span>
-            <span>{isLoading ? "memuat…" : formatTime(duration)}</span>
+            <span>{isLoading ? stageLabel || "memuat…" : formatTime(duration)}</span>
           </div>
         </div>
 
