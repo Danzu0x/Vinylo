@@ -3,11 +3,16 @@ import { usePlayer } from "../context/PlayerContext.jsx";
 import "../styles/mini-player.css";
 
 export function MiniPlayer() {
-  const { track, isPlaying, isBuffering, isResolving, toggle, expand, currentTime, duration } = usePlayer();
+  const { track, isPlaying, isBuffering, isResolving, resolveStage, toggle, expand, currentTime, duration } = usePlayer();
 
   if (!track) return null;
 
   const progress = duration ? Math.min(1, currentTime / duration) : 0;
+  const stageLabel = {
+    spotify: "Menyiapkan lagu…",
+    fallback: "Mencoba sumber cadangan…",
+    youtube: "Mencoba sumber terakhir…"
+  }[resolveStage];
 
   return (
     <div className="mini-player" role="button" tabIndex={0} onClick={expand}
@@ -20,7 +25,7 @@ export function MiniPlayer() {
       <div className="mini-player__meta">
         <p className="mini-player__title">{track.title}</p>
         <p className="mini-player__sub">
-          {isResolving || isBuffering ? "Memuat…" : track.duration}
+          {isResolving ? stageLabel : isBuffering ? "Memuat…" : track.duration || track.artist || ""}
         </p>
       </div>
       <button
