@@ -1,8 +1,3 @@
-// GET /api/spotify-fallback?url=<spotify track url>
-// Backup download source: myspoty.app, a synchronous lookup (no job/poll
-// dance, single request). Used when the spotyloader job flow fails or
-// times out.
-
 export default async function handler(req, res) {
   const url = (req.query.url || "").toString().trim();
   if (!url) {
