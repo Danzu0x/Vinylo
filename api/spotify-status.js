@@ -1,8 +1,3 @@
-// GET /api/spotify-status?jobId=<id>
-// One poll of a spotyloader job. The frontend calls this on an interval
-// (see PlayerContext) rather than us looping server-side, so each request
-// stays fast and well within any serverless timeout.
-
 const BASE = "https://spotyloader.com";
 const HEADERS = {
   "User-Agent":
