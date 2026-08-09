@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TrackCard } from "./TrackCard.jsx";
 import { usePlayer } from "../context/PlayerContext.jsx";
 import "../styles/home.css";
@@ -35,14 +35,13 @@ function shuffle(arr) {
 function SectionRow({ title, query }) {
   const [tracks, setTracks] = useState([]);
   const [state, setState] = useState("loading"); // loading | ready | error
+  const [errorMessage, setErrorMessage] = useState("");
   const { track: activeTrack, playTrack } = usePlayer();
-  const requestedRef = useRef(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (requestedRef.current) return;
-    requestedRef.current = true;
-
     let cancelled = false;
+    setState("loading");
     fetch(`/api/search?q=${encodeURIComponent(query)}`)
       .then((r) => r.json())
       .then((data) => {
@@ -51,17 +50,33 @@ function SectionRow({ title, query }) {
           setTracks(shuffle(data.result).slice(0, 12));
           setState("ready");
         } else {
+          setErrorMessage(data.message || "Tidak ada hasil.");
           setState("error");
         }
       })
-      .catch(() => !cancelled && setState("error"));
+      .catch(() => {
+        if (!cancelled) {
+          setErrorMessage("Koneksi ke server gagal.");
+          setState("error");
+        }
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [query]);
+  }, [query, attempt]);
 
-  if (state === "error") return null;
+  if (state === "error") {
+    return (
+      <section className="home-section">
+        <h2 className="home-section__title">{title}</h2>
+        <div className="home-section__error">
+          <p>{errorMessage}</p>
+          <button onClick={() => setAttempt((n) => n + 1)}>Coba lagi</button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="home-section">
