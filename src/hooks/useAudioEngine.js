@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-/**
- * Wraps one <audio> element and exposes a small imperative API plus
- * reactive playback state. Kept independent from track-fetching logic
- * so PlayerContext can decide *what* to load; this hook only cares
- * about *how* it plays.
- */
 export function useAudioEngine({ onEnded } = {}) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -48,7 +42,6 @@ export function useAudioEngine({ onEnded } = {}) {
       audio.pause();
       audio.src = "";
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const load = useCallback((src, autoplay = true, seekTo = 0) => {
@@ -61,8 +54,6 @@ export function useAudioEngine({ onEnded } = {}) {
     audio.currentTime = seekTo;
     if (autoplay) {
       audio.play().catch(() => {
-        // Autoplay can be blocked before a user gesture; state will simply
-        // stay paused until the person presses play.
         setIsBuffering(false);
       });
     } else {
