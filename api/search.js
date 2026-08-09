@@ -183,10 +183,19 @@ async function searchSpotify(q, auth) {
 
   const searchV2 = data?.data?.searchV2;
   const trackItems = searchV2?.tracksV2?.items?.length
-    ? searchV2.tracksV2.items.map((n) => n.data)
+    ? searchV2.tracksV2.items.map((n) => n.item?.data)
     : (searchV2?.topResultsV2?.itemsV2 || [])
         .filter((n) => n.item?.__typename === "TrackResponseWrapper")
         .map((n) => n.item.data);
+
+  console.log(
+    "[api/search] searchV2 keys:",
+    Object.keys(searchV2 || {}),
+    "| tracksV2 raw count:",
+    searchV2?.tracksV2?.items?.length || 0,
+    "| normalized count:",
+    trackItems.filter(Boolean).length
+  );
 
   return trackItems.map(normalizeTrack).filter(Boolean);
 }
