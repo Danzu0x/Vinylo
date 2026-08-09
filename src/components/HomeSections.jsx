@@ -10,8 +10,27 @@ const SECTIONS = [
   { title: "Lofi buat nemenin kerja", query: "lofi chill mix 2022" },
   { title: "Lewis Capaldi", query: "Lewis Capaldi" },
   { title: "Alan Walker", query: "Alan Walker" },
-  { title: "Rex Orange County", query: "Rex Orange County" }
+  { title: "Rex Orange County", query: "Rex Orange County" },
+  { title: "Tulus & musik Indonesia", query: "Tulus" },
+  { title: "The Weeknd", query: "The Weeknd" },
+  { title: "Bruno Mars", query: "Bruno Mars" },
+  { title: "NIKI", query: "NIKI" },
+  { title: "Dangdut & koplo hits", query: "dangdut koplo terbaru 2025" },
+  { title: "Hip-hop internasional", query: "hip hop hits 2025" },
+  { title: "Malam santai, akustik", query: "akustik cover santai" }
 ];
+
+// Fisher–Yates so home doesn't show tracks in the exact same order every
+// visit — combined with taking more results than we display, this makes
+// the same underlying search query feel fresher on reload.
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
 function SectionRow({ title, query }) {
   const [tracks, setTracks] = useState([]);
@@ -29,7 +48,7 @@ function SectionRow({ title, query }) {
       .then((data) => {
         if (cancelled) return;
         if (data.status && data.result?.length) {
-          setTracks(data.result.slice(0, 10));
+          setTracks(shuffle(data.result).slice(0, 12));
           setState("ready");
         } else {
           setState("error");
