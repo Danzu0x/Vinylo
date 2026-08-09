@@ -1,5 +1,6 @@
 import React from "react";
 import { usePlayer } from "../context/PlayerContext.jsx";
+import { ArtThumb } from "./TrackCard.jsx";
 import "../styles/mini-player.css";
 
 export function MiniPlayer() {
@@ -20,7 +21,7 @@ export function MiniPlayer() {
       aria-label="Buka pemutar penuh">
       <div className="mini-player__progress" style={{ transform: `scaleX(${progress})` }} />
       <div className="mini-player__art">
-        <img src={track.thumbnail} alt="" />
+        <ArtThumb src={track.thumbnail} />
       </div>
       <div className="mini-player__meta">
         <p className="mini-player__title">{track.title}</p>
