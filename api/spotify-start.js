@@ -1,10 +1,3 @@
-// POST /api/spotify-start   body: { url }
-// Kicks off a spotyloader.com conversion job and returns immediately with
-// a jobId. Deliberately kept fast/non-blocking (no polling in here) since
-// serverless functions have execution time limits and a job can realistically
-// take anywhere from ~8s to over a minute — polling happens client-side via
-// /api/spotify-status instead.
-
 const BASE = "https://spotyloader.com";
 const HEADERS = {
   "User-Agent":
