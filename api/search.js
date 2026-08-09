@@ -86,6 +86,7 @@ export default async function handler(req, res) {
     });
 
     if (upstreamRes.status === 401 || upstreamRes.status === 403) {
+      console.error("[api/search] Spotify auth rejected", upstreamRes.status);
       res.status(502).json({
         status: false,
         message: "Token Spotify sudah kedaluwarsa. Perbarui SPOTIFY_BEARER / SPOTIFY_CLIENT_TOKEN."
@@ -93,7 +94,24 @@ export default async function handler(req, res) {
       return;
     }
 
+    if (!upstreamRes.ok) {
+      const bodyText = await upstreamRes.text().catch(() => "");
+      console.error("[api/search] Spotify upstream error", upstreamRes.status, bodyText.slice(0, 500));
+      res.status(502).json({
+        status: false,
+        message: `Spotify API mengembalikan error (HTTP ${upstreamRes.status}).`
+      });
+      return;
+    }
+
     const data = await upstreamRes.json();
+
+    if (data?.errors?.length) {
+      console.error("[api/search] Spotify returned GraphQL errors", JSON.stringify(data.errors).slice(0, 500));
+      res.status(502).json({ status: false, message: data.errors[0]?.message || "Spotify menolak query ini." });
+      return;
+    }
+
     const items = data?.data?.searchV2?.topResultsV2?.itemsV2 || [];
     const result = items.map(normalizeItem).filter(Boolean);
 
@@ -105,6 +123,7 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
     res.status(200).json({ status: true, result });
   } catch (err) {
+    console.error("[api/search] unexpected error", err);
     res.status(500).json({ status: false, message: "Gagal menghubungi pencarian Spotify." });
   }
 }
