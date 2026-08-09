@@ -1,9 +1,3 @@
-// GET /api/youtube-search?q=<query>
-// LAST-RESORT FALLBACK ONLY. Used when both Spotify download routes
-// (spotyloader job flow + myspoty lookup) fail for a track — we search
-// YouTube for the same title/artist and hand the top hit to
-// /api/youtube-download as a final attempt to get *something* playable.
-
 export default async function handler(req, res) {
   const q = (req.query.q || "").toString().trim();
 
