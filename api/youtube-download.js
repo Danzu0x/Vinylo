@@ -1,7 +1,3 @@
-// GET /api/youtube-download?url=<youtube url>
-// LAST-RESORT FALLBACK ONLY. Same azbry ytmp3 proxy as before, now only
-// invoked after both Spotify download routes have failed.
-
 export default async function handler(req, res) {
   const url = (req.query.url || "").toString().trim();
 
@@ -23,9 +19,6 @@ export default async function handler(req, res) {
 
     const result = data.result || data;
 
-    // `download` is the direct mp3 link. `url` is just the YouTube watch
-    // page (kept for reference), so it must NOT be checked before the
-    // actual audio fields below.
     const audioUrl =
       result.download ||
       result.downloadUrl ||
