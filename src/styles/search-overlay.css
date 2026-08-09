@@ -64,3 +64,21 @@
   margin-top: 60px;
   padding: 0 24px;
 }
+
+.search-overlay__load-more {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 10px 8px 4px;
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--brass);
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  transition: background 0.2s var(--ease);
+}
+
+.search-overlay__load-more:hover {
+  background: var(--panel-hover);
+}
