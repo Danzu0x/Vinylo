@@ -31,6 +31,38 @@
   animation: shimmer 1.4s ease infinite;
 }
 
+.home-section__error {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+}
+
+.home-section__error p {
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.home-section__error button {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--brass);
+  background: var(--panel-hover);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s var(--ease);
+}
+
+.home-section__error button:hover {
+  background: var(--hairline);
+}
+
 @keyframes shimmer {
   0% {
     background-position: 100% 50%;
