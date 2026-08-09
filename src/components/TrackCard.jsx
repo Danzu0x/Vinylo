@@ -13,6 +13,35 @@ function splitTitleArtist(track) {
   return { artist: null, song: track.title };
 }
 
+export function ArtThumb({ src, alt = "" }) {
+  const [failed, setFailed] = React.useState(false);
+  const showPlaceholder = !src || failed;
+
+  if (showPlaceholder) {
+    return (
+      <div className="art-thumb__placeholder" aria-hidden="true">
+        <NoteGlyph />
+      </div>
+    );
+  }
+
+  return <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
+}
+
+function NoteGlyph() {
+  return (
+    <svg width="28%" height="28%" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm11-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function TrackCard({ track, onPlay, isActive }) {
   const { artist, song } = splitTitleArtist(track);
 
@@ -23,7 +52,7 @@ export function TrackCard({ track, onPlay, isActive }) {
       aria-label={`Putar ${track.title}`}
     >
       <div className="track-card__art">
-        <img src={track.thumbnail} alt="" loading="lazy" />
+        <ArtThumb src={track.thumbnail} />
         {track.duration && <span className="track-card__duration">{track.duration}</span>}
         <span className="track-card__play-badge" aria-hidden="true">
           <PlayGlyph />
@@ -47,7 +76,7 @@ export function TrackRow({ track, onPlay, isActive }) {
       aria-label={`Putar ${track.title}`}
     >
       <div className="track-row__art">
-        <img src={track.thumbnail} alt="" loading="lazy" />
+        <ArtThumb src={track.thumbnail} />
       </div>
       <div className="track-row__meta">
         <p className="track-row__song">{song}</p>
