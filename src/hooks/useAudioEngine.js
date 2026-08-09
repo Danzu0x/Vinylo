@@ -51,20 +51,22 @@ export function useAudioEngine({ onEnded } = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const load = useCallback((src, autoplay = true) => {
+  const load = useCallback((src, autoplay = true, seekTo = 0) => {
     const audio = audioRef.current;
     if (!audio) return;
     setIsBuffering(true);
-    setCurrentTime(0);
+    setCurrentTime(seekTo);
     setDuration(0);
     audio.src = src;
-    audio.currentTime = 0;
+    audio.currentTime = seekTo;
     if (autoplay) {
       audio.play().catch(() => {
         // Autoplay can be blocked before a user gesture; state will simply
         // stay paused until the person presses play.
         setIsBuffering(false);
       });
+    } else {
+      setIsBuffering(false);
     }
   }, []);
 
