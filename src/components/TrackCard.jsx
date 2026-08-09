@@ -1,18 +1,20 @@
 import React from "react";
 import "../styles/track-card.css";
 
-function splitTitleArtist(title) {
-  // Most YouTube music titles come as "Artist - Song Title..."; fall back
-  // gracefully when there's no dash.
-  const parts = title.split(" - ");
+function splitTitleArtist(track) {
+  // Spotify results already come with a clean, separate artist field. Older
+  // sources (the YouTube last-resort fallback) only give a combined
+  // "Artist - Song" title, so guess from that when artist isn't present.
+  if (track.artist) return { artist: track.artist, song: track.title };
+  const parts = track.title.split(" - ");
   if (parts.length >= 2) {
     return { artist: parts[0].trim(), song: parts.slice(1).join(" - ").trim() };
   }
-  return { artist: null, song: title };
+  return { artist: null, song: track.title };
 }
 
 export function TrackCard({ track, onPlay, isActive }) {
-  const { artist, song } = splitTitleArtist(track.title);
+  const { artist, song } = splitTitleArtist(track);
 
   return (
     <button
@@ -22,7 +24,7 @@ export function TrackCard({ track, onPlay, isActive }) {
     >
       <div className="track-card__art">
         <img src={track.thumbnail} alt="" loading="lazy" />
-        <span className="track-card__duration">{track.duration}</span>
+        {track.duration && <span className="track-card__duration">{track.duration}</span>}
         <span className="track-card__play-badge" aria-hidden="true">
           <PlayGlyph />
         </span>
@@ -36,7 +38,7 @@ export function TrackCard({ track, onPlay, isActive }) {
 }
 
 export function TrackRow({ track, onPlay, isActive }) {
-  const { artist, song } = splitTitleArtist(track.title);
+  const { artist, song } = splitTitleArtist(track);
 
   return (
     <button
@@ -50,8 +52,9 @@ export function TrackRow({ track, onPlay, isActive }) {
       <div className="track-row__meta">
         <p className="track-row__song">{song}</p>
         <p className="track-row__sub">
-          {artist ? `${artist} · ` : ""}
-          {track.duration}
+          {artist ? `${artist}` : ""}
+          {artist && track.duration ? " · " : ""}
+          {track.duration || ""}
         </p>
       </div>
       <span className="track-row__glyph" aria-hidden="true">
