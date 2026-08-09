@@ -1,26 +1,3 @@
-// GET /api/search?q=<query>
-// PRIMARY search source: Spotify's own internal "pathfinder" GraphQL API.
-//
-// Unlike the previous version, this does NOT rely on a manually-copied
-// bearer token that expires every hour or so. Instead it replicates how
-// open.spotify.com's own web player authenticates itself:
-//   1. Generate a TOTP code (same algorithm Spotify's client uses as an
-//      anti-bot check) and use it to fetch a short-lived access token from
-//      open.spotify.com/api/token.
-//   2. Exchange that for a client-token from clienttoken.spotify.com.
-//   3. Use both to call the pathfinder search API.
-//
-// The resulting token pair is cached in-memory (module scope) for its
-// actual lifetime, so most requests don't re-run this handshake at all —
-// only the first request per cold start, or once the cached token expires.
-//
-// ⚠️ This still isn't a public/documented API. Spotify could change the
-// TOTP secret/version or the persisted-query hash at any time, which would
-// break this the same way the old token did — just hopefully far less
-// often, since this mirrors the real client instead of a copy-pasted token.
-// If SPOTIFY_BEARER / SPOTIFY_CLIENT_TOKEN env vars are set, they're used
-// as a manual override/last-resort fallback if the auto handshake fails.
-
 import crypto from "node:crypto";
 
 const TOTP_SECRET = "376136387538459893883312310911992847112448894410210511297108";
@@ -36,8 +13,7 @@ const BROWSER_HEADERS = {
     "Mozilla/5.0 (Linux; Android 16; NX729J) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.34 Mobile Safari/537.36"
 };
 
-// module-scope cache — survives across requests on the same warm serverless instance
-let cachedAuth = null; // { bearer, clientToken, expiresAt }
+let cachedAuth = null;
 
 function generateTOTP(tsMs) {
   const counter = Math.floor(Math.floor(tsMs / 1000) / 30);
@@ -91,8 +67,6 @@ async function fetchFreshAuth() {
   const clientToken = clientData?.granted_token?.token;
   if (!clientToken) throw new Error("clienttoken endpoint returned no token");
 
-  // token.accessTokenExpirationTimestampMs tells us exactly when this dies;
-  // refresh a bit early to be safe.
   const expiresAt = (token.accessTokenExpirationTimestampMs || Date.now() + 55 * 60 * 1000) - 60_000;
 
   return { bearer: token.accessToken, clientToken, expiresAt };
@@ -128,7 +102,7 @@ function normalizeTrack(t) {
   const thumbnail = t.albumOfTrack?.coverArt?.sources?.slice(-1)[0]?.url || null;
 
   return {
-    videoId: id, // kept as "videoId" for compatibility with the rest of the app; this is the Spotify track ID
+    videoId: id,
     title: t.name,
     artist: artist || null,
     thumbnail,
@@ -215,9 +189,8 @@ export default async function handler(req, res) {
     return;
   } catch (err) {
     console.error("[api/search] auto-auth flow failed:", err.message);
-    cachedAuth = null; // don't keep a possibly-bad cached token around
+    cachedAuth = null;
 
-    // last-resort fallback: manually-provided env var tokens, if set
     const fallbackBearer = process.env.SPOTIFY_BEARER;
     const fallbackClientToken = process.env.SPOTIFY_CLIENT_TOKEN;
     if (fallbackBearer && fallbackClientToken) {
