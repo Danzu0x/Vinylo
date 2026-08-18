@@ -6,18 +6,21 @@ import { SearchOverlay } from "./components/SearchOverlay.jsx";
 import { SideNav } from "./components/SideNav.jsx";
 import { CreditsPage } from "./components/CreditsPage.jsx";
 import { WelcomeModal } from "./components/WelcomeModal.jsx";
+import { PlaylistDetailPage } from "./components/PlaylistDetailPage.jsx";
 import { usePlayer } from "./context/PlayerContext.jsx";
 import "./styles/layout.css";
 
 export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [activePage, setActivePage] = useState(null); // null | "credits"
+  const [activePage, setActivePage] = useState(null);
+  const [openPlaylistId, setOpenPlaylistId] = useState(null);
   const { track } = usePlayer();
 
   const goHome = () => {
     setIsSearchOpen(false);
     setActivePage(null);
+    setOpenPlaylistId(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -46,7 +49,7 @@ export default function App() {
       </header>
 
       <main className={`app-main ${track ? "app-main--with-player" : ""}`}>
-        <HomeSections />
+        <HomeSections onOpenPlaylist={setOpenPlaylistId} />
       </main>
 
       <MiniPlayer />
@@ -54,6 +57,11 @@ export default function App() {
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <SideNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} onNavigate={setActivePage} />
       <CreditsPage isOpen={activePage === "credits"} onClose={() => setActivePage(null)} />
+      <PlaylistDetailPage
+        playlistId={openPlaylistId}
+        isOpen={!!openPlaylistId}
+        onClose={() => setOpenPlaylistId(null)}
+      />
       <WelcomeModal />
     </div>
   );
