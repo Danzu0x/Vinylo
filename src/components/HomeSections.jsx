@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { TrackCard } from "./TrackCard.jsx";
+import { TrackCard, ArtThumb } from "./TrackCard.jsx";
 import { usePlayer } from "../context/PlayerContext.jsx";
+import { usePlaylists } from "../context/PlaylistContext.jsx";
 import "../styles/home.css";
 
-// Curated starting points so the home page never feels empty. Each section
-// is just a search query under the hood — swap or add rows here freely.
 const SECTIONS = [
   { title: "Populer di Indonesia, 2025", query: "lagu pop indonesia terpopuler 2025" },
   { title: "Lofi buat nemenin kerja", query: "lofi chill mix 2022" },
@@ -107,9 +106,41 @@ function SkeletonCard() {
   );
 }
 
-export function HomeSections() {
+function PlaylistCard({ playlist, onOpen }) {
+  const coverTrack = playlist.tracks[0];
+  return (
+    <button className="playlist-card" onClick={() => onOpen(playlist.id)} aria-label={`Buka playlist ${playlist.name}`}>
+      <div className="playlist-card__art">
+        <ArtThumb src={coverTrack?.thumbnail} />
+      </div>
+      <div className="playlist-card__meta">
+        <p className="playlist-card__name">{playlist.name}</p>
+        <p className="playlist-card__count">{playlist.tracks.length} lagu</p>
+      </div>
+    </button>
+  );
+}
+
+function PlaylistSection({ onOpenPlaylist }) {
+  const { playlists } = usePlaylists();
+  if (playlists.length === 0) return null;
+
+  return (
+    <section className="home-section">
+      <h2 className="home-section__title">Playlist Kamu</h2>
+      <div className="home-section__row hscroll">
+        {playlists.map((p) => (
+          <PlaylistCard key={p.id} playlist={p} onOpen={onOpenPlaylist} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function HomeSections({ onOpenPlaylist }) {
   return (
     <div className="home-sections">
+      <PlaylistSection onOpenPlaylist={onOpenPlaylist} />
       {SECTIONS.map((s) => (
         <SectionRow key={s.title} title={s.title} query={s.query} />
       ))}
