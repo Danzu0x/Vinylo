@@ -34,6 +34,12 @@
   display: block;
 }
 
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .app-header__search-btn {
   width: 40px;
   height: 40px;

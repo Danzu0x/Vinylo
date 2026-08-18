@@ -1,0 +1,204 @@
+.add-playlist-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+}
+
+.add-playlist-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  animation: playlist-fade 0.25s var(--ease);
+}
+
+.add-playlist-sheet__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 18px 20px calc(20px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--hairline);
+  animation: playlist-slide-up 0.3s var(--ease);
+}
+
+@keyframes playlist-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes playlist-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.add-playlist-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.add-playlist-sheet__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.2px;
+}
+
+.add-playlist-sheet__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.add-playlist-sheet__close:hover {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.add-playlist-sheet__list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.add-playlist-sheet__hint {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 10px 2px 16px;
+}
+
+.add-playlist-sheet__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  text-align: left;
+  transition: background 0.2s var(--ease);
+}
+
+.add-playlist-sheet__item:hover {
+  background: var(--panel-hover);
+}
+
+.add-playlist-sheet__item--active {
+  background: var(--brass-tint);
+}
+
+.add-playlist-sheet__item-name {
+  flex: 1;
+  font-size: 14.5px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.add-playlist-sheet__item-count {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.add-playlist-sheet__item-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.add-playlist-sheet__item--active .add-playlist-sheet__item-check {
+  color: var(--brass);
+}
+
+.add-playlist-sheet__new-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--hairline);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.add-playlist-sheet__new-btn:hover {
+  border-color: var(--brass);
+  color: var(--text);
+}
+
+.add-playlist-sheet__create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-playlist-sheet__create-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  font-size: 14.5px;
+}
+
+.add-playlist-sheet__create-form input:focus {
+  border-color: var(--brass);
+}
+
+.add-playlist-sheet__create-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.add-playlist-sheet__create-actions button {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.add-playlist-sheet__create-actions button[type="button"] {
+  color: var(--text-muted);
+}
+
+.add-playlist-sheet__create-actions button[type="submit"] {
+  background: var(--brass);
+  color: #0f0f11;
+}
+
+.add-playlist-sheet__create-actions button[type="submit"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

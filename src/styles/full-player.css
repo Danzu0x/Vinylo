@@ -67,6 +67,22 @@
   color: var(--text);
 }
 
+.full-player__add-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border-radius: 999px;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.full-player__add-btn:hover {
+  background: var(--panel);
+  color: var(--brass);
+}
+
 .full-player__eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
