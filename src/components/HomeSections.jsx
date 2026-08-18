@@ -4,6 +4,8 @@ import { usePlayer } from "../context/PlayerContext.jsx";
 import { usePlaylists } from "../context/PlaylistContext.jsx";
 import "../styles/home.css";
 
+// Curated starting points so the home page never feels empty. Each section
+// is just a search query under the hood — swap or add rows here freely.
 const SECTIONS = [
   { title: "Populer di Indonesia, 2025", query: "lagu pop indonesia terpopuler 2025" },
   { title: "Lofi buat nemenin kerja", query: "lofi chill mix 2022" },
