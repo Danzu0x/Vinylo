@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/credits-page.css";
 
+const PHOTO_SRC = "/DanzuPMP.jpg";
+
 export function CreditsPage({ isOpen, onClose }) {
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const showPlaceholder = !PHOTO_SRC || photoFailed;
+
   return (
     <div className={`credits-page ${isOpen ? "credits-page--open" : ""}`} aria-hidden={!isOpen}>
       <header className="credits-page__header">
@@ -13,12 +18,20 @@ export function CreditsPage({ isOpen, onClose }) {
       </header>
 
       <div className="credits-page__body">
-        <div className="credits-page__photo" aria-hidden="true">
-          <PersonGlyph />
+        <div className="credits-page__photo">
+          {showPlaceholder ? (
+            <PersonGlyph />
+          ) : (
+            <img
+              src={PHOTO_SRC}
+              alt="Foto pembuat"
+              onError={() => setPhotoFailed(true)}
+            />
+          )}
         </div>
-        <h1 className="credits-page__name">Nama</h1>
+        <h1 className="credits-page__name">Nama Pembuat</h1>
         <p className="credits-page__desc">
-          Deskripsi singkat tentang you.
+          Isi sendiri. File /src/components/CreditsPage.jsx line 34
         </p>
       </div>
     </div>
